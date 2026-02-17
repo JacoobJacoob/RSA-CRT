@@ -1,7 +1,10 @@
 import random
 min_range = pow(2, 1024)
 max_range = pow(2, 1025) - 1
-#Uses naive algorithm to check if num is prime
+
+#Input:num, bound
+#Output: True/False
+#Uses naive primality algorithm to check if num is coprime to all numbers upto bound
 def possible_prime(num: int, bound: int) -> bool:
     for i in range(2,bound):
         if(i%2 == 0): 
@@ -10,6 +13,8 @@ def possible_prime(num: int, bound: int) -> bool:
             return False
     return True
 
+#Input:num, iterations
+#Output: True/False
 #Uses miller-rabin primality test; page 156 rosen; to test if num is prime in a random base a for some iterations
 #after the iterations, has 0.25^iterations chance to be composite
 def miller_rabin(num: int, iterations: int) -> bool:
@@ -31,40 +36,47 @@ def miller_rabin(num: int, iterations: int) -> bool:
             return False
     return True
 
-#Returns a list[amount] with higly likely primes
+#Input: amount
+#Output: [p,q] such that they are highly likely primes between min_range -> max_range
 def find_primes(amount: int) -> list[int]:
     global min_range,max_range
     res = []
     while amount != 0:
+
         #get random odd int in range
         candidate = random.randint(min_range,max_range)
         if(candidate % 2 == 0):
             candidate += 1
-        if possible_prime(candidate, 10000):
+    
+        if possible_prime(candidate, 10000):#early check for composite numbers
             if miller_rabin(candidate, 100):#so (0.25)^100 chance to not be prime
                 res.append(candidate)
                 amount -= 1
     return res 
 
-#calculate extended GCD and also x,y with euclids alg such that ax+by=gcd(a,b) recuresivly
+#Input: a, b
+#Output: gcd, x, y such that ax+by == gcd
+#Using extended Euclid's algorithm
 def extended_gcd(a: int,b: int) -> tuple[int,int,int]:
     if b == 0:
         return a, 1, 0
     gcd, x, y = extended_gcd(b,a%b)
     return (gcd, y, x - (a//b)*y)
 
+#Input: phin
+#Output: e such that gcd(phin, e) == 1 and is relatively small
 def find_e(phin: int) -> int:
     for i in range(2,phin):
         gcd = extended_gcd(phin,i)[0]
         if(gcd == 1):
             return i
-    return -1 #illegal output to indicate failure
+    return -1 #illegal output to indicate failure; won't return because every number >2 has atleast one coprime number
 
+#Input: num, base
+#Output: inv such that num*inv === 1 (mod base)
 def mod_inverse(num: int, base: int) -> int:
     gcd, x, y = extended_gcd(num, base)
     if(gcd != 1):
         print("!!!!!!")
         return -1 #illegal output to indicate failure
     return x%base
-
-print(find_e(24))
