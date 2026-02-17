@@ -49,9 +49,9 @@ def find_primes(amount: int) -> list[int]:
 #calculate extended GCD and also x,y with euclids alg such that ax+by=gcd(a,b) recuresivly
 def extended_gcd(a: int,b: int) -> tuple[int,int,int]:
     if b == 0:
-        return a , 0, 1
+        return a, 1, 0
     gcd, x, y = extended_gcd(b,a%b)
-    return (gcd, y - (b//a) * x, x)
+    return (gcd, y, x - (a//b)*y)
 
 def find_e(phin: int) -> int:
     for i in range(2,phin):
@@ -63,6 +63,7 @@ def find_e(phin: int) -> int:
 def mod_inverse(num: int, base: int) -> int:
     gcd, x, y = extended_gcd(num, base)
     if(gcd != 1):
+        print("!!!!!!")
         return -1 #illegal output to indicate failure
     return x%base
 
