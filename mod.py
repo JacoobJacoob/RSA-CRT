@@ -66,7 +66,7 @@ def extended_gcd(a: int,b: int) -> tuple[int,int,int]:
 #Input: phin
 #Output: e such that gcd(phin, e) == 1 and is relatively small
 def find_e(phin: int) -> int:
-    for i in range(2,phin):
+    for i in range(65537,phin):
         gcd = extended_gcd(phin,i)[0]
         if(gcd == 1):
             return i
